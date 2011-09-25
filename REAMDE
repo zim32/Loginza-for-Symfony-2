@@ -1,9 +1,14 @@
+README
+======
+
 1) Add Zim32LoginzaBundle to your deps file
 [Zim32LoginzaBundle]
     git=git://github.com/zim32/Loginza-for-Symfony-2.git
     target=/bundles/Zim32/LoginzaBundle
 
 Make /bin/vendors install	
+
+-----------------
 
 2) Configure /app/config/security.yml
 factories:
@@ -22,9 +27,11 @@ firewalls:
           token_route: your_route_where_loginza_redirect_user
           secret_key: your_sercer_key
           widget_id: your_widget_id
-		  
+
+-----------------
+
 3) Create controller and view for "your_login_action_route_name" route
-View-----------------------------
+View
 {% extends "::base.html.twig" %}
 
 {% block body %}
@@ -38,25 +45,28 @@ View-----------------------------
     {% endif %}
 {% endblock %}
 
-Controller-----------------------------
+Controller
 public function loginAction(){
     $token_url = $this->generateUrl($this->container->getParameter('security.loginza.token_route'), array(), true);
     return $this->render('Zim32MainBundle:UserProfile:login.html.twig', array('token_url'=>$token_url));
 }
 
+-----------------
+
 4) Create controller and view for "your_route_where_loginza_redirect_user" route
-View-----------------------------
+View
 {% extends "::base.html.twig" %}
 
 {% block body %}
 	Hello {{username}}
 {% endblock %}
 
-Controller-----------------------------
+Controller
 public function indexAction(){
     return array('username'=>$this->get('security.context')->getToken()->getUsername());
 }
 
+-----------------
 
 You can get unique user ID from token.  For example: $this->get('security.context')->getToken()->getUid()
 All information returned from loginza(uid, name, picture and others) can be accesed from $this->get('security.context')->getToken()->getAttribute('loginza_info')
