@@ -10,7 +10,15 @@ Make /bin/vendors install
 
 -----------------
 
-2) Configure /app/config/security.yml
+2) Add Zim32 namespace into your /app/autoload.php
+$loader->registerNamespaces(array(
+    ................
+    'Zim32'            => __DIR__.'/../vendor/bundles',
+));
+
+-----------------
+
+3) Configure /app/config/security.yml
 factories:
       - "%kernel.root_dir%/../vendor/bundles/Zim32/LoginzaBundle/Resources/config/security_factories.xml"
 	  
@@ -30,7 +38,7 @@ firewalls:
 
 -----------------
 
-3) Create controller and view for "your_login_action_route_name" route
+4) Create controller and view for "your_login_action_route_name" route
 View
 {% extends "::base.html.twig" %}
 
@@ -53,7 +61,7 @@ public function loginAction(){
 
 -----------------
 
-4) Create controller and view for "your_route_where_loginza_redirect_user" route
+5) Create controller and view for "your_route_where_loginza_redirect_user" route
 View
 {% extends "::base.html.twig" %}
 
