@@ -27,6 +27,7 @@ class LoginzaFactory implements SecurityFactoryInterface {
         $container->setParameter('security.loginza.token_route', $config['token_route']);
         $container->setParameter('security.loginza.secret_key', $config['secret_key']);
         $container->setParameter('security.loginza.widget_id', $config['widget_id']);
+        $container->setParameter('security.loginza.entity', isset($config['entity'])?$config['entity']:false);
 
         return array($providerId, $listenerId, $entryPointId);
 	}
@@ -59,6 +60,9 @@ class LoginzaFactory implements SecurityFactoryInterface {
             ->end()
             ->children()
                 ->scalarNode('widget_id')->isRequired()->end()
+            ->end()
+            ->children()
+                ->scalarNode('entity')->end()
             ->end()
            ;
 	}

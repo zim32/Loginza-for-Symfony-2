@@ -36,8 +36,15 @@ class LoginzaListener implements ListenerInterface  {
 
             if(empty($decoded)) throw new AuthenticationException("Wrong loginza responce format");
             if(isset($decoded['error_message'])) throw new AuthenticationException($decoded['error_message']);
-            
-            $user = new User($decoded['name']['first_name'], $decoded['uid'], $roles = array('ROLE_USER'));
+
+            $user = false;
+            if($repo = $this->container->getParameter('security.loginza.entity')){
+                $user = $this->loadUserFromDoctrine($decoded, $repo);
+            }
+
+            if(!$user){
+                $user = new User($decoded['name']['first_name'], $decoded['uid'], $roles = array('ROLE_USER'));
+            }
 
             $token = new LoginzaToken($user->getRoles());
             $token->setUser($user);
@@ -45,5 +52,36 @@ class LoginzaListener implements ListenerInterface  {
             $token->setAttribute('loginza_info', $decoded);
             $this->securityContext->setToken($token);
         }
+    }
+
+    protected function loadUserFromDoctrine($data, $repository){
+        $em = $this->container->get('doctrine')->getEntityManager();
+        try{
+            $repo = $em->getRepository($repository);
+        }catch(\Exception $e){
+            throw $e;
+            return null;
+        }
+
+        try{
+            $user = $repo->findOneBy(array('uid'=>$data['uid']));
+            if($user === null){
+                $user = new $repository();
+                $user->setUid($data['uid']);
+                $user->setPassword('');
+                $user->setRoles(serialize(array()));
+                $user->setSalt('');
+                $user->setUsername($data['name']['first_name']);
+                $em->persist($user);
+                $em->flush();
+                return $user;
+            }
+        }catch(\Exception $e){
+            throw $e;
+            return null;
+        }
+
+        return $user;
+        
     }
 }
