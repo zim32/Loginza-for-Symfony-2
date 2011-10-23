@@ -9,4 +9,8 @@ class LoginzaUser {
     public function equals(UserInterface $user){
         return $this->uid === $user->getUid();
     }
+	
+	public function __sleep(){
+        return array('id', 'username', 'roles', 'uid', 'password', 'salt');
+    }
 }
