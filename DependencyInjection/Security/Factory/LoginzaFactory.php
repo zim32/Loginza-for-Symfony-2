@@ -64,9 +64,6 @@ class LoginzaFactory implements SecurityFactoryInterface {
             ->children()
                 ->scalarNode('entity')->end()
             ->end()
-			->children()
-                ->scalarNode('entity')->end()
-            ->end()
            ;
 	}
 
